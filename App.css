@@ -1,0 +1,4 @@
+
+/* No separate CSS files allowed, using Tailwind's arbitrary values and keyframes in index.html instead if needed, 
+   but for complex ones we can inject them via a style tag in index.html. 
+   Adding missing animations here via tailwind config in index.html is better. */
