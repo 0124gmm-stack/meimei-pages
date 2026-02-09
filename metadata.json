@@ -1,7 +1,5 @@
 {
   "name": "Meimei - The Interactive Portfolio",
-  "description": "A playful, character-driven personal website inspired by pablotheflamingo.com, featuring a reactive mascot, party mode, and AI-powered interaction.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
+  "description": "A playful, character-driven personal website inspired by pablotheflamingo.com, featuring a reactive mascot and party mode.",
+  "requestFramePermissions": []
 }
