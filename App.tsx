@@ -1,59 +1,118 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import InteractiveMascot from './components/InteractiveMascot';
 import ContentSection from './components/ContentSection';
 import { SectionType } from './types';
 
+// Helper component for buttons with firework/sparkle effects
+const FireworkButton = ({ href, text }: { href: string; text: string }) => {
+  return (
+    <a 
+      href={href} 
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex items-center justify-center overflow-visible bg-white text-[#0a2540] border border-slate-200 shadow-sm hover:bg-[#0a2540] hover:text-white hover:border-[#0a2540] w-full sm:w-auto"
+    >
+      <span className="relative z-10">{text}</span>
+      
+      {/* Sparkle Particles - optimized for dark background on hover */}
+      {/* Top Left - Pink */}
+      <span className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full transition-all duration-500 ease-out opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 group-hover:-translate-y-8 group-hover:-translate-x-6 bg-pink-400" />
+      
+      {/* Top Right - Blue */}
+      <span className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full transition-all duration-500 ease-out opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 group-hover:-translate-y-8 group-hover:translate-x-6 delay-75 bg-blue-400" />
+      
+      {/* Bottom - Yellow */}
+      <span className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full transition-all duration-500 ease-out opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-8 group-hover:translate-x-2 delay-100 bg-yellow-400" />
+      
+      {/* Left - Teal */}
+      <span className="absolute top-1/2 left-1/2 w-1 h-1 rounded-full transition-all duration-500 ease-out opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 group-hover:-translate-y-2 group-hover:-translate-x-10 delay-50 bg-teal-400" />
+       
+      {/* Right - Purple */}
+      <span className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full transition-all duration-500 ease-out opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 group-hover:-translate-y-2 group-hover:translate-x-10 delay-50 bg-purple-400" />
+    </a>
+  );
+};
+
+// Simplified Signature Badge Component
+// Updated to ensure single line on mobile with whitespace-nowrap and responsive font size
+const SignatureBadge = () => (
+  <div className="px-4 py-2 md:px-5 md:py-2.5 bg-white/80 backdrop-blur-sm border border-slate-100 rounded-full shadow-sm text-[8px] sm:text-[10px] md:text-xs font-bold text-slate-500 tracking-widest uppercase cursor-default whitespace-nowrap">
+    Designed by Meimei • Implemented by Gemini AI Studio
+  </div>
+);
+
 const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState<SectionType>('hero');
   const [isPartyMode, setIsPartyMode] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [hoveredContact, setHoveredContact] = useState<'email' | 'linkedin' | null>(null);
+  const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({});
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const sections: { id: SectionType; title: string; color: string }[] = [
-    { id: 'hero', title: 'Home', color: 'bg-[#FF9494]' }, // Coral Pink
-    { id: 'work', title: 'Work', color: 'bg-[#89E0D0]' }, // Mint Teal
-    { id: 'education', title: 'Edu & Skills', color: 'bg-[#C7A9F5]' }, // Soft Purple
-    { id: 'contact', title: 'Contact', color: 'bg-[#FFD36E]' }, // Golden Yellow
+  // Defined minimalist color themes per section (backgrounds)
+  // Updated Work theme to a subtle slate-blue gradient to distinguish from white
+  const sections: { id: SectionType; title: string; theme: string }[] = [
+    { id: 'hero', title: 'Home', theme: 'gradient-mesh' },
+    { id: 'work', title: 'Work', theme: 'bg-gradient-to-b from-[#f8faff] to-[#f0f4f8]' }, 
+    { id: 'education', title: 'Skills', theme: 'bg-[#f6f9fc]' },
+    { id: 'contact', title: 'Contact', theme: 'bg-white' },
   ];
 
   const workItems = [
     {
-      title: "Merchant Growth Strategy",
-      category: "ByteDance | Strategy PM",
+      project: "Merchant Growth Strategy",
+      company: "ByteDance",
+      industry: "GLOBAL TECH",
+      role: "Strategy Product Manager",
+      timeline: "2025 — 2025",
       url: "https://www.bytedance.com",
-      image: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=800&auto=format&fit=crop",
-      desc: "Engineered a dynamic goal-setting engine and intelligent notification system for 3M+ merchants on Douyin E-commerce."
+      desc: "Engineered a dynamic goal-setting engine and intelligent notification system for 3M+ merchants on Douyin E-commerce.",
+      // Tech Blue Gradient
+      brandGradient: "bg-gradient-to-r from-[#335eea] to-[#45aaf2]", 
+      brandText: "text-[#335eea]"
     },
     {
-      title: "Global Marketplace Scaling",
-      category: "Poizon Global | Platform PM",
+      project: "Global Marketplace Scaling",
+      company: "Poizon Global",
+      industry: "E-COMMERCE PLATFORM",
+      role: "Platform Product Manager",
+      timeline: "2023 — 2025",
       url: "https://www.poizon.com/authentication/home?&re_source=1",
-      image: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800&auto=format&fit=crop",
-      desc: "Architected a cross-border data processing platform and scalable infrastructure to drive global import GMV."
+      desc: "Architected a cross-border data processing platform and scalable infrastructure to drive global import GMV.",
+      // Poizon Signature Turquoise/Cyan
+      brandGradient: "bg-gradient-to-r from-[#00bba4] to-[#00d0bc]",
+      brandText: "text-[#00bba4]"
     },
     {
-      title: "Merchant Risk Infrastructure",
-      category: "ByteDance | Platform PM",
+      project: "Merchant Risk Infrastructure",
+      company: "ByteDance",
+      industry: "GLOBAL TECH",
+      role: "Platform Product Manager",
+      timeline: "2021 — 2023",
       url: "https://www.bytedance.com",
-      image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop",
-      desc: "Designed transaction throttling models and managed end-to-end deposit systems for 5M+ merchants."
+      desc: "Designed transaction throttling models and managed end-to-end deposit systems for 5M+ merchants.",
+      // Tech Blue Gradient
+      brandGradient: "bg-gradient-to-r from-[#335eea] to-[#45aaf2]", 
+      brandText: "text-[#335eea]"
     },
     {
-      title: "Platform Trust & Safety",
-      category: "Pinduoduo | Trust PM",
+      project: "Platform Trust & Safety",
+      company: "Pinduoduo",
+      industry: "SOCIAL E-COMMERCE",
+      role: "Trust Product Manager",
+      timeline: "2019 — 2021",
       url: "https://m.pinduoduo.com/en/",
-      image: "https://images.unsplash.com/photo-1633167606207-d840b5070fc2?q=80&w=800&auto=format&fit=crop",
-      desc: "Orchestrated large-scale merchant governance frameworks and rigorous quality-control workflows to eliminate counterfeit listings and uphold marketplace integrity."
+      desc: "Championed Pinduoduo's anti-counterfeiting initiative and successfully safeguarding marketplace integrity for millions of consumers.",
+      // Pinduoduo Red
+      brandGradient: "bg-gradient-to-r from-[#e02e24] to-[#ff5d5d]",
+      brandText: "text-[#e02e24]"
     }
   ];
 
   const skillGroups = [
     {
       category: "Technical Skills",
-      skills: ["SQL (Proficient)", "A/B Testing", "Data Analysis"]
+      skills: ["SQL (Proficient)", "A/B Testing", "Data Analysis", "Python"]
     },
     {
       category: "Product Mastery",
@@ -66,6 +125,7 @@ const App: React.FC = () => {
   ];
 
   useEffect(() => {
+    // Scroll Spy Logic
     const handleScroll = () => {
       const scrollPos = window.scrollY + window.innerHeight / 3;
       const current = sections.find((s) => {
@@ -80,7 +140,27 @@ const App: React.FC = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    // Intersection Observer for Animation
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleSections((prev) => ({ ...prev, [entry.target.id]: true }));
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('section').forEach((section) => {
+      observer.observe(section);
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, [activeSection, sections]);
 
   const toggleMusic = () => {
@@ -100,252 +180,327 @@ const App: React.FC = () => {
     }
   };
 
-  const activeColor = sections.find(s => s.id === activeSection)?.color || 'bg-[#FF9494]';
-
+  // Determine styles for the Mascot container based on sections
   const getMascotContainerClasses = () => {
-    if (isPartyMode) return 'items-end justify-end p-[5%]';
+    // Party Mode: Bottom right, z-0 to stay under text
+    if (isPartyMode) return 'bottom-0 right-0 fixed z-0 pointer-events-none origin-bottom-right';
+
     switch (activeSection) {
-      case 'hero': return 'items-end justify-end p-[1%] sm:p-[2%] md:p-[1%]'; 
-      case 'work': return 'items-start justify-end p-[8%] lg:p-[4%]'; 
-      case 'education': return 'items-start justify-start p-[8%] lg:p-[4%]'; 
+      case 'hero':
+        // Hero: Top Right
+        // Moved closer to center on mobile (top-[18%]) to be nearer to the text, instead of pinned to the corner
+        return 'top-[18%] right-[8%] md:top-[15%] md:right-[5%] z-20 absolute';
+      case 'work':
+        // Work: Peek from bottom right
+        return 'bottom-0 right-10 translate-y-1/2 opacity-20 hover:opacity-100 transition-opacity fixed z-20';
+      case 'education':
+        // Edu: Left side peek
+        return 'bottom-0 left-10 translate-y-1/4 opacity-10 fixed z-20';
       case 'contact':
-        if (hoveredContact === 'email') return 'items-center justify-end pr-[5%] md:pr-[22%] lg:pr-[25%]'; 
-        if (hoveredContact === 'linkedin') return 'items-center justify-start pl-[5%] md:pl-[22%] lg:pl-[25%]'; 
-        return 'items-center justify-center';
-      default: return 'items-center justify-center';
+        // Contact: Center stage, but HIGHER UP
+        // Adjusted top position from 8% to 16% to bring it closer to text on mobile as requested
+        return 'top-[16%] left-1/2 -translate-x-1/2 z-20 fixed';
+      default:
+        return 'hidden';
     }
   };
 
   const getMascotTransformClasses = () => {
-    let base = "pointer-events-auto h-[140px] w-[140px] sm:h-[180px] sm:w-[180px] md:h-[260px] md:w-[260px] lg:h-[320px] lg:w-[320px] transition-all duration-1000 transform ";
-    if (isPartyMode) return base + "scale-75 rotate-6";
-    if (activeSection === 'hero') return base + "scale-[0.35] sm:scale-60 md:scale-80 lg:scale-95 translate-x-2 translate-y-2";
-    if (activeSection === 'work' || activeSection === 'education') return base + "scale-[0.4] sm:scale-[0.5] opacity-10 md:opacity-20 grayscale-[0.3] -translate-y-12";
-    if (activeSection === 'contact') {
-      if (hoveredContact) return base + "scale-80 md:scale-90 rotate-12";
-      return base + "scale-90 md:scale-100";
-    }
-    return base;
-  };
-
-  const getContactBtnStyle = (type: 'email' | 'linkedin') => {
-    const isThisHovered = hoveredContact === type;
-    const isOtherHovered = hoveredContact !== null && hoveredContact !== type;
+    let base = "pointer-events-auto transition-all duration-1000 ease-out ";
+    // Smaller scale in party mode so it doesn't block text
+    if (isPartyMode) return base + "scale-75 md:scale-90 rotate-12 h-[200px] w-[200px] md:h-[300px] md:w-[300px]";
     
-    let baseClass = "w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] h-[80px] md:h-[150px] rounded-[2rem] md:rounded-[4rem] flex items-center justify-center text-base md:text-2xl font-black uppercase tracking-widest transition-all duration-500 border ";
-    const shadowClass = isThisHovered ? "shadow-[0_20px_60px_rgba(255,255,255,0.6)]" : "shadow-[0_10px_30px_rgba(255,255,255,0.2)]";
-    if (isThisHovered) return baseClass + `scale-105 bg-white text-black border-white z-20 ${shadowClass}`;
-    if (isOtherHovered) return baseClass + "scale-[0.9] bg-white/10 text-black/10 border-white/5 z-10 blur-[1.5px]";
-    return baseClass + `bg-white/70 backdrop-blur-2xl text-black border-white/40 hover:bg-white hover:text-black hover:border-white ${shadowClass}`;
+    switch (activeSection) {
+      case 'hero':
+        // Hero: Reduced size on mobile to 60px to prevent text overlap
+        return base + "h-[60px] w-[60px] md:h-[200px] md:w-[200px] opacity-100 rotate-12";
+      case 'work':
+        return base + "h-[150px] w-[150px] scale-75 grayscale opacity-50";
+      case 'education':
+        return base + "h-[150px] w-[150px] -rotate-12 grayscale opacity-40";
+      case 'contact':
+        // Contact: Even smaller on mobile (100px) to prevent overlap with text
+        return base + "h-[100px] w-[100px] md:h-[180px] md:w-[180px] scale-100";
+      default:
+        return base;
+    }
   };
 
-  const SignatureBadge = () => (
-    <div className="absolute bottom-6 md:bottom-12 right-6 md:right-12 z-50 flex flex-col items-end gap-3 pointer-events-none select-none group">
-      <div className="flex flex-col items-end gap-1">
-        <div className="px-4 py-2 bg-black text-white rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest shadow-2xl transition-all group-hover:-translate-y-1">
-          Designed by <span className="text-[#FF9494]">Meimei</span>
-        </div>
-        <div className="px-4 py-2 bg-white text-black rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl border border-black/5 transition-all group-hover:-translate-y-0.5 delay-75">
-          Implemented by <span className="text-black/40">Gemini AI Studio</span>
-        </div>
-      </div>
-    </div>
-  );
+  const getMascotMessage = () => {
+    if (activeSection === 'contact') return "Thanks for browsing!";
+    return "Hi there!";
+  };
 
+  const activeTheme = sections.find(s => s.id === activeSection)?.theme || 'bg-white';
+  
   return (
-    <div className={`transition-all duration-1000 ease-in-out min-h-screen ${isPartyMode ? 'animate-rainbow' : activeColor}`}>
+    <div className={`transition-colors duration-700 min-h-screen font-sans antialiased ${activeTheme}`}>
+      
+      {/* Pink Party Mode Overlay */}
+      <div className={`fixed inset-0 pointer-events-none transition-opacity duration-500 z-50 ${isPartyMode ? 'opacity-100' : 'opacity-0'}`}>
+         {isPartyMode && (
+           <div className="absolute inset-0 bg-pink-500/10 mix-blend-multiply pointer-events-none"></div>
+         )}
+      </div>
+
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-[100] flex items-center justify-center">
           {[...Array(40)].map((_, i) => (
-            <div key={i} className="confetti-particle animate-confetti" style={{ backgroundColor: ['#000', '#fff'][i % 2], '--tw-translate-x': `${(Math.random()-0.5)*1000}px`, '--tw-translate-y': `${(Math.random()-0.5)*1000}px`, '--tw-rotate': `${Math.random()*720}deg` } as any} />
+            <div key={i} className="confetti-particle animate-confetti" style={{ backgroundColor: ['#635bff', '#00d4ff', '#ff4d4d'][i % 3], '--tw-translate-x': `${(Math.random()-0.5)*1500}px`, '--tw-translate-y': `${(Math.random()-0.5)*1500}px`, '--tw-rotate': `${Math.random()*720}deg` } as any} />
           ))}
         </div>
       )}
 
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-20">
-        <div className="absolute top-[-20%] left-[-15%] w-[60%] h-[60%] bg-white/50 rounded-full blur-[140px] animate-blob"></div>
-        <div className="absolute bottom-[-20%] right-[-15%] w-[70%] h-[70%] bg-white/30 rounded-full blur-[180px] animate-blob animation-delay-2000"></div>
-      </div>
-
-      <nav className="fixed top-4 md:top-8 left-1/2 -translate-x-1/2 z-50 bg-white/25 backdrop-blur-3xl px-3 md:px-4 py-2 rounded-full border border-black/5 flex items-center gap-1 md:gap-2 transition-all shadow-xl max-w-[95vw]">
-        {sections.map((s) => (
-          <button key={s.id} onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' })} className={`px-2 md:px-4 py-1.5 rounded-full text-[8px] md:text-xs font-black uppercase tracking-widest transition-all ${activeSection === s.id ? 'bg-black text-white' : 'text-black/40 hover:text-black'}`}>
-            {s.title}
+      {/* Navigation - Clean Floating Pill */}
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-[60]">
+        <div className="bg-white/80 backdrop-blur-md pl-2 pr-2 py-1.5 rounded-full shadow-[0_2px_12px_rgba(0,0,0,0.08)] border border-slate-100 flex items-center gap-1 transition-all">
+          {sections.map((s) => (
+            <button 
+              key={s.id} 
+              onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' })} 
+              className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all ${activeSection === s.id ? 'bg-[#0a2540] text-white shadow-md' : 'text-slate-500 hover:text-[#0a2540] hover:bg-slate-50'}`}
+            >
+              {s.title}
+            </button>
+          ))}
+          <div className="w-px h-4 bg-slate-200 mx-1"></div>
+          <button 
+            onClick={toggleMusic} 
+            className={`p-2 rounded-full transition-all ${isPartyMode ? 'bg-pink-500 text-white shadow-lg shadow-pink-200' : 'text-slate-400 hover:text-indigo-600 hover:bg-indigo-50'}`}
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
           </button>
-        ))}
-        <div className="w-[1px] h-4 bg-black/10 mx-1 md:mx-2"></div>
-        <button onClick={toggleMusic} className="flex items-center gap-2 md:gap-3 px-3 md:px-4 py-1.5 rounded-full transition-all bg-black/5 hover:bg-black/10 border border-black/5 group">
-          <svg className={`w-3 md:w-3.5 h-3 md:h-3.5 transition-all duration-300 ${isPartyMode ? 'text-black scale-110' : 'text-black/40 scale-100'}`} fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-          </svg>
-          <div className={`w-6 md:w-8 h-3.5 md:h-4 rounded-full relative transition-colors duration-300 ${isPartyMode ? 'bg-black' : 'bg-black/20'}`}>
-             <div className={`absolute top-0.5 w-2.5 md:w-3 h-2.5 md:h-3 rounded-full bg-white shadow-sm transition-all duration-300 ${isPartyMode ? 'left-3 md:left-4' : 'left-0.5 md:left-1'}`}></div>
-          </div>
-        </button>
+        </div>
       </nav>
 
-      <div className={`fixed inset-0 pointer-events-none z-10 flex transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1) ${getMascotContainerClasses()}`}>
+      {/* Mascot Container */}
+      <div className={`transition-all duration-1000 ${getMascotContainerClasses()}`}>
         <div className={getMascotTransformClasses()}>
           <InteractiveMascot 
-            mood={isPartyMode ? 'dancing' : activeSection === 'hero' ? 'happy' : hoveredContact ? 'curious' : 'happy'} 
+            mood={isPartyMode ? 'dancing' : activeSection === 'hero' ? 'happy' : activeSection === 'contact' ? 'curious' : 'happy'} 
             isPartyMode={isPartyMode} 
             audioRef={audioRef}
+            showHint={(activeSection === 'hero' || activeSection === 'contact') && !isPartyMode}
+            message={getMascotMessage()}
           />
         </div>
       </div>
 
-      <main className="relative z-20">
-        <div id="hero" className="h-[100svh] flex items-center justify-center px-6 text-center relative overflow-hidden">
-          <div className="max-w-5xl relative z-20">
-            <h1 className="text-5xl sm:text-8xl md:text-9xl lg:text-[12rem] font-black text-white leading-none tracking-tighter select-none">
-              I'M MEIMEI.
+      <main className="relative z-10">
+        
+        {/* HERO SECTION */}
+        {/* Added pb-20 md:pb-40 to shift center of content upwards visually, clearing space for bottom badges */}
+        <section id="hero" className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden px-6 pt-20 pb-20 md:pb-40">
+          {/* Abstract Stripe Shape */}
+          <div className="absolute top-0 right-0 w-[70%] h-full hero-accent-shape skew-x-[-12deg] translate-x-1/4 -z-10 origin-bottom"></div>
+          
+          <div className="w-full max-w-[90rem] z-10 animate-fade-in flex flex-col items-center text-center">
+            
+            {/* Removed 'Open for opportunities' button as requested */}
+
+            <h1 className="font-black text-[#0a2540] leading-[0.9] tracking-tighter flex flex-col items-center select-none">
+              <span className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl mb-2 sm:mb-4">I'M</span>
+              <span className="text-[18vw] sm:text-[16vw] md:text-[15vw] leading-[0.85] tracking-tight text-[#0a2540]">MEIMEI.</span>
             </h1>
-            <div className="mt-8 md:mt-12 flex flex-col items-center animate-float">
-              <div className="h-[2px] w-12 md:w-20 bg-black/20 mb-6 md:mb-8 opacity-50"></div>
-              <p className="text-lg sm:text-2xl md:text-3xl lg:text-4xl text-black/80 font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] relative inline-block group px-4">
-                Ecommerce Product Manager
-                <span className="absolute -bottom-2 md:-bottom-3 left-0 w-full h-[2px] md:h-[3px] bg-black/10 scale-x-75 group-hover:scale-x-100 transition-transform duration-700"></span>
+
+            <div className="mt-12 md:mt-16 space-y-4 max-w-4xl">
+              <h2 className="text-base sm:text-lg md:text-2xl font-black text-[#0a2540] tracking-[0.2em] sm:tracking-[0.3em] uppercase">
+                Senior Product Manager
+              </h2>
+              <p className="text-[10px] sm:text-xs font-bold text-slate-500 tracking-[0.15em] uppercase">
+                6 YEARS SCALING MARKETPLACES <span className="text-indigo-400 mx-2">•</span> DATA-DRIVEN STRATEGY <span className="text-indigo-400 mx-2">•</span> AI PRACTITIONER
               </p>
-              <div className="mt-6 md:mt-8 flex flex-col sm:flex-row items-center gap-2 md:gap-6">
-                <span className="text-black/60 font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-[8px] md:text-xs">
-                  6 YEARS OF SCALING PRODUCTS
-                </span>
-                <span className="hidden sm:block w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-black/20 animate-subtle-pulse"></span>
-                <span className="text-black/60 font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-[8px] md:text-xs">
-                  DRIVING GLOBAL GROWTH
-                </span>
-              </div>
             </div>
           </div>
-          <SignatureBadge />
-        </div>
+          
+          {/* Signature Badge - Centered Bottom */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex justify-center w-full px-4">
+             <SignatureBadge />
+          </div>
+        </section>
 
-        <ContentSection id="work" title="Work">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-14">
+        {/* WORK SECTION */}
+        <ContentSection id="work" title="Selected Work" isDark={false}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {workItems.map((item, i) => (
-              <div key={i} className="group relative bg-white/60 backdrop-blur-2xl aspect-[16/10] rounded-[2rem] md:rounded-[3rem] lg:rounded-[4rem] overflow-hidden border border-black/5 shadow-2xl transition-all duration-700 hover:-translate-y-2 md:hover:-translate-y-3">
-                <img src={item.image} alt={item.title} className="w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-all duration-1000 scale-110 group-hover:scale-100" />
-                <div className="absolute inset-0 p-6 sm:p-10 lg:p-14 flex flex-col justify-end">
-                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="inline-block self-start mb-2 md:mb-4">
-                    <span className="text-black/40 font-black text-[8px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.4em] group-hover:text-black transition-colors duration-500 underline decoration-black/10 hover:decoration-black/40 underline-offset-4">
-                      {item.category}
+              <a 
+                href={item.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                key={i} 
+                className={`group relative block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-700 ease-out border border-slate-100 hover:-translate-y-2 hover:scale-[1.02] flex flex-col h-full ${visibleSections['work'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
+                style={{ transitionDelay: `${i * 150}ms` }}
+              >
+                {/* Redesigned Card Header: Industry & Theme Strip */}
+                <div className="relative">
+                  {/* Decorative Color Strip - Color Coded by Company Brand */}
+                  <div className={`h-14 relative overflow-hidden flex items-center justify-between px-6 ${item.brandGradient}`}>
+                    <div className="absolute inset-0 bg-white/10 group-hover:bg-transparent transition-colors z-0" />
+                    
+                    {/* Abstract Pattern overlay */}
+                    <div className="absolute inset-0 opacity-20 mix-blend-overlay" style={{backgroundImage: 'radial-gradient(circle, #fff 10%, transparent 10%)', backgroundSize: '10px 10px'}}></div>
+
+                    {/* Industry Badge */}
+                    <span className="relative z-10 text-[10px] font-black text-white tracking-[0.2em] uppercase border border-white/30 px-2 py-1 rounded backdrop-blur-sm">
+                      {item.industry}
                     </span>
-                  </a>
-                  <h3 className="text-xl sm:text-2xl md:text-4xl font-black text-slate-900 mb-2 md:mb-3 tracking-tight leading-none">{item.title}</h3>
-                  <p className="text-slate-700 font-bold text-[12px] sm:text-sm md:text-base leading-relaxed max-w-sm opacity-0 group-hover:opacity-100 transition-opacity duration-700 translate-y-4 group-hover:translate-y-0 transform transition-transform hidden sm:block">
-                    {item.desc}
-                  </p>
+                    
+                    {/* Timeline Badge */}
+                    <span className="relative z-10 text-white/90 font-mono text-[10px] md:text-xs font-bold tracking-tight">
+                      {item.timeline}
+                    </span>
+                  </div>
                 </div>
-              </div>
+                
+                <div className="flex-1 px-6 pb-8 pt-6 flex flex-col">
+                   <div className="mb-4">
+                     <div className="flex flex-col items-start mb-2">
+                         {/* EMPHASIZED COMPANY NAME: Larger font size, bold weight */}
+                         <h3 className={`text-3xl md:text-4xl font-black text-[#0a2540] tracking-tighter transition-colors mb-2 leading-none group-hover:${item.brandText.replace('text-', 'text-')}`.includes('#') ? 'group-hover:opacity-80' : ''} style={item.brandText.startsWith('text-[#') ? { '--hover-color': item.brandText.match(/\[(.*?)\]/)?.[1] } as React.CSSProperties : {}}>
+                            {/* We handle hover color via class if possible, or style */}
+                            <span className="group-hover:text-[var(--hover-color)] transition-colors duration-300" style={{ '--hover-color': item.brandText.match(/\[(.*?)\]/)?.[1] || '#4f46e5' } as React.CSSProperties}>{item.company}</span>
+                         </h3>
+                         <span className={`text-xs font-bold uppercase tracking-widest ${item.brandText}`}>
+                           {item.role}
+                         </span>
+                     </div>
+                     <h4 className="text-base font-bold text-slate-700 leading-snug mt-2">{item.project}</h4>
+                   </div>
+                   <p className="text-slate-500 text-sm leading-relaxed mt-auto border-t border-slate-50 pt-4">
+                     {item.desc}
+                   </p>
+                </div>
+              </a>
             ))}
           </div>
         </ContentSection>
 
-        <ContentSection id="education" title="Profile & Mastery">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 items-start">
-            <div className="bg-white/40 backdrop-blur-xl rounded-[2.5rem] md:rounded-[3.5rem] border border-white/40 p-6 md:p-10 shadow-xl space-y-6 md:space-y-8 h-full transition-transform hover:-translate-y-2 duration-500">
-              <h3 className="text-[10px] md:text-xs font-black text-black/30 uppercase tracking-[0.3em]">Education</h3>
-              <div className="space-y-6 md:space-y-8">
-                <div className="relative pl-6 border-l-2 border-black/10">
-                  <div className="absolute top-0 -left-[9px] w-4 h-4 rounded-full bg-black/20"></div>
-                  <span className="block text-[8px] md:text-[10px] font-black text-black/40 uppercase tracking-widest mb-1">Master in Marketing | GPA 3.80</span>
-                  <a href="https://www.whu.edu.cn/" target="_blank" rel="noopener noreferrer" className="group/edu">
-                    <h4 className="text-lg md:text-xl font-black text-black leading-tight group-hover/edu:text-black/60 transition-colors">
-                      Wuhan University
-                      <span className="inline-block ml-1 opacity-0 group-hover/edu:opacity-100 transition-opacity text-xs align-top">↗</span>
-                    </h4>
-                  </a>
-                  <p className="text-black/40 font-bold text-[8px] md:text-[10px] uppercase mt-1">2016 - 2019</p>
-                </div>
-                <div className="relative pl-6 border-l-2 border-black/10">
-                  <div className="absolute top-0 -left-[9px] w-4 h-4 rounded-full bg-black/20"></div>
-                  <span className="block text-[8px] md:text-[10px] font-black text-black/40 uppercase tracking-widest mb-1">Bachelor in Marketing | GPA 3.55</span>
-                  <a href="https://www.lzu.edu.cn/" target="_blank" rel="noopener noreferrer" className="group/edu">
-                    <h4 className="text-lg md:text-xl font-black text-black leading-tight group-hover/edu:text-black/60 transition-colors">
-                      Lanzhou University
-                      <span className="inline-block ml-1 opacity-0 group-hover/edu:opacity-100 transition-opacity text-xs align-top">↗</span>
-                    </h4>
-                  </a>
-                  <p className="text-black/40 font-bold text-[8px] md:text-[10px] uppercase mt-1">2012 - 2016</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/40 backdrop-blur-xl rounded-[2.5rem] md:rounded-[3.5rem] border border-white/40 p-6 md:p-10 shadow-xl space-y-6 md:space-y-8 h-full transition-transform hover:-translate-y-2 duration-500">
-              <h3 className="text-[10px] md:text-xs font-black text-black/30 uppercase tracking-[0.3em]">Academic Publication</h3>
-              <div className="space-y-5 md:space-y-6">
-                <a 
-                  href="https://www.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFD&dbname=CJFDLAST2019&filename=GGYY201910011&uniplatform=OVERSEA&v=KZLB3_urHJDQK4ggahOt4b-IaXbUWoKgF9lmxzcwseum_TA_7pO-lBTFCeOfAYVe" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="block group/pub"
-                >
-                  <p className="text-black/70 text-sm md:text-base font-bold leading-relaxed italic mb-3 group-hover/pub:text-black transition-colors decoration-black/10 group-hover/pub:decoration-black underline underline-offset-4">
-                    "Gain" and "Loss" of Graphic and Textual Advertising in Social Media: Business Image vs. Product Attitude
-                  </p>
-                  <div className="p-4 rounded-2xl bg-black/5 border border-black/5 group-hover/pub:bg-black/10 transition-all">
-                    <p className="text-[9px] md:text-[10px] text-black/50 font-black uppercase tracking-widest leading-normal mb-1">
-                      China Industrial Economics (CIE) • Published Oct 2019 • Top 2 Journal of CASS
-                    </p>
-                    <p className="text-[9px] md:text-[10px] text-black font-black uppercase tracking-widest border-t border-black/10 pt-2 mt-2">
-                      To date, it has been downloaded over 4,000 times and cited over 50 times.
-                    </p>
+        {/* EDUCATION & SKILLS SECTION - RESTRUCTURED */}
+        <ContentSection id="education" title="Expertise" isDark={false}>
+           <div className="space-y-8">
+             
+             {/* 1. Primary Focus: Skills (Top, Full Width, Emphasized) */}
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {skillGroups.map((group, idx) => (
+                  <div key={idx} className="bg-white p-6 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100 hover:shadow-lg transition-all duration-300 h-full flex flex-col group">
+                    <div className="mb-4 pb-3 border-b border-slate-50">
+                        <h4 className="text-lg font-black text-[#0a2540] tracking-tight group-hover:text-indigo-600 transition-colors">{group.category}</h4>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {group.skills.map((skill, sIdx) => (
+                        <div key={sIdx} className="flex items-center gap-2.5 text-slate-600 font-bold text-sm tracking-wide">
+                          <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover:bg-indigo-600 group-hover:scale-125 transition-all shrink-0"></div>
+                          {skill}
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                ))}
+             </div>
+
+             {/* 2. Secondary Focus: Education & Publications (Bottom, Compact, Consistent Style) */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Education Card */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-100 flex flex-col justify-center shadow-[0_2px_4px_rgba(0,0,0,0.02)]">
+                   <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-6">Education History</h3>
+                   <div className="space-y-6">
+                      <div className="flex flex-col gap-1">
+                         <div className="flex justify-between items-baseline mb-1">
+                            <h4 className="text-base font-bold text-[#0a2540]">Wuhan University</h4>
+                            <span className="text-xs text-slate-400 font-mono font-medium">2016—2019</span>
+                         </div>
+                         <p className="text-sm font-medium text-slate-500">Master in Marketing <span className="text-indigo-500 font-bold ml-1">• GPA 3.80</span></p>
+                      </div>
+                      <div className="w-full h-px bg-slate-50"></div>
+                      <div className="flex flex-col gap-1">
+                         <div className="flex justify-between items-baseline mb-1">
+                            <h4 className="text-base font-bold text-[#0a2540]">Lanzhou University</h4>
+                            <span className="text-xs text-slate-400 font-mono font-medium">2012—2016</span>
+                         </div>
+                         <p className="text-sm font-medium text-slate-500">Bachelor in Marketing <span className="text-indigo-500 font-bold ml-1">• GPA 3.55</span></p>
+                      </div>
+                   </div>
+                </div>
+
+                {/* Publication Card - Redesigned to match aesthetic */}
+                <a href="https://www.cnki.net/KCMS/detail/detail.aspx?dbcode=CJFD&dbname=CJFDLAST2019&filename=GGYY201910011&uniplatform=OVERSEA" target="_blank" className="group bg-white p-6 rounded-2xl border border-slate-100 hover:border-indigo-100 hover:shadow-lg transition-all flex flex-col justify-center relative overflow-hidden shadow-[0_2px_4px_rgba(0,0,0,0.02)]">
+                   {/* Background Decor */}
+                   <div className="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500">
+                      <svg className="w-32 h-32 text-indigo-900" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                   </div>
+                   
+                   <h3 className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-6">Selected Publication</h3>
+                   
+                   <div className="relative z-10">
+                      <h4 className="text-base font-bold text-[#0a2540] leading-snug mb-3 group-hover:text-indigo-600 transition-colors">
+                        "Gain" and "Loss" of Graphic and Textual Advertising in Social Media
+                      </h4>
+                      <div className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                        <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Journal</span>
+                        <span className="text-xs">China Industrial Economics (CIE)</span>
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-indigo-400 transition-colors">
+                            Cited 50+ times
+                         </div>
+                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-indigo-400 transition-colors flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-slate-300 group-hover:bg-indigo-400"></span>
+                            Downloaded 4,000+ times
+                         </div>
+                      </div>
+                   </div>
                 </a>
-                <p className="text-black/40 text-[10px] md:text-[11px] font-medium leading-relaxed">
-                  Researching the intersection of behavioral economics and social commerce strategy.
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white/40 backdrop-blur-xl rounded-[2.5rem] md:rounded-[3.5rem] border border-white/40 p-6 md:p-10 shadow-xl space-y-8 md:space-y-10 h-full transition-transform hover:-translate-y-2 duration-500 md:col-span-2 lg:col-span-1">
-              <h3 className="text-[10px] md:text-xs font-black text-black/30 uppercase tracking-[0.3em]">Mastery & Skills</h3>
-              {skillGroups.map((group, idx) => (
-                <div key={idx} className="space-y-3 md:space-y-4">
-                  <h4 className="text-[8px] md:text-[10px] font-black text-black/20 uppercase tracking-[0.2em]">{group.category}</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {group.skills.map((skill, sIdx) => (
-                      <span key={sIdx} className="px-2 md:px-3 py-1 md:py-1.5 rounded-full bg-black/5 border border-black/5 text-black/70 text-[10px] md:text-[11px] font-black transition-all hover:bg-black hover:text-white cursor-default">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
+             </div>
+           </div>
         </ContentSection>
 
-        <div id="contact" className="h-[100svh] flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
-          <div className="relative z-30 flex flex-col items-center max-w-6xl w-full">
-            <h2 className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-black text-white mb-10 md:mb-20 tracking-tighter select-none">
-              LET'S CONNECT.
-            </h2>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 w-full max-w-4xl px-4">
-              <a 
-                href="mailto:0124gmm@gmail.com" 
-                onMouseEnter={() => setHoveredContact('email')} 
-                onMouseLeave={() => setHoveredContact(null)} 
-                className={getContactBtnStyle('email')}
-              >
-                <span>Direct Mail</span>
-              </a>
-              <a 
-                href="https://www.linkedin.com/in/meimei-gu-68778a26a" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                onMouseEnter={() => setHoveredContact('linkedin')} 
-                onMouseLeave={() => setHoveredContact(null)} 
-                className={getContactBtnStyle('linkedin')}
-              >
-                <span>LinkedIn</span>
-              </a>
-            </div>
-            <p className="mt-10 md:mt-20 text-black/40 font-black uppercase tracking-[0.4em] md:tracking-[0.8em] text-[8px] md:text-[10px] animate-pulse">BASED IN SANTA CLARA, CA</p>
-          </div>
-          <SignatureBadge />
-        </div>
+        {/* CONTACT SECTION */}
+        {/* Updated: 
+            1. Layout: Significantly reduced top padding for mobile (pt-32) to prevent text from being pushed too far down.
+            2. Reordering: Moved the "Currently based in" badge ABOVE the headline for better vertical flow on mobile.
+            3. Structure: Used flex-col with better gap management to fill space evenly.
+            4. Text Refinement: 'something world-class' is kept together with nowrap to prevent orphan words on mobile.
+        */}
+        <section id="contact" className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-gradient-to-b from-white via-[#f0f4f8] to-[#dbe4ff] relative overflow-hidden pt-32 md:pt-40 pb-20">
+           
+           {/* Background Decorations */}
+           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+           <div className="absolute -left-20 top-1/3 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl mix-blend-multiply animate-pulse-slow"></div>
+           <div className="absolute -right-20 bottom-1/3 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl mix-blend-multiply animate-pulse-slow animation-delay-2000"></div>
+           
+           <div className="relative z-20 max-w-4xl w-full flex flex-col items-center mt-4 md:mt-0">
+              
+              {/* Badge moved to top as an eyebrow */}
+              <div className="mb-6 flex justify-center w-full px-4 animate-fade-in delay-100">
+                 <div className="group flex items-center gap-3 px-6 py-3 bg-white/60 backdrop-blur-md border border-white/50 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 cursor-default">
+                    <div className="relative flex h-3 w-3 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                    </div>
+                    <span className="text-xs md:text-sm font-bold text-slate-600 tracking-wide group-hover:text-indigo-600 transition-colors uppercase whitespace-nowrap">
+                      Currently based in Santa Clara, CA
+                    </span>
+                 </div>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl md:text-7xl font-black text-[#0a2540] mb-8 tracking-tight drop-shadow-sm leading-tight md:leading-tight">
+                Let's build <span className="inline-block">something <span className="text-indigo-600 whitespace-nowrap">world-class.</span></span>
+              </h2>
+              
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center w-full max-w-md sm:max-w-none">
+                 <FireworkButton href="mailto:0124gmm@gmail.com" text="Email Me" />
+                 <FireworkButton href="https://www.linkedin.com/in/meimei-gu-68778a26a" text="LinkedIn Profile" />
+              </div>
+           </div>
+           
+           <footer className="absolute bottom-6 w-full flex justify-center px-4">
+             <SignatureBadge />
+           </footer>
+        </section>
+
       </main>
     </div>
   );
