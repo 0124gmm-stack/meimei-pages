@@ -230,11 +230,12 @@ const App: React.FC = () => {
           
           <div className="flex-1 w-full max-w-[90rem] z-10 animate-fade-in flex flex-col justify-center items-center text-center pointer-events-none">
             
-            {/* Interactive Text Container */}
+            {/* Interactive Text Container (Touch & Mouse Support) */}
             <div 
-              className="relative group pointer-events-auto cursor-default flex flex-col items-center justify-center py-8 px-12"
-              onMouseEnter={() => setIsHeroTextHovered(true)}
-              onMouseLeave={() => setIsHeroTextHovered(false)}
+              className="relative group pointer-events-auto cursor-pointer md:cursor-default flex flex-col items-center justify-center py-8 px-12"
+              onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setIsHeroTextHovered(true); }}
+              onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setIsHeroTextHovered(false); }}
+              onClick={() => { if (window.matchMedia('(hover: none)').matches) setIsHeroTextHovered(!isHeroTextHovered); }}
             >
               
               {/* Localized Canvas 2D Effect - Fades in on hover and masked around the text */}
@@ -401,13 +402,14 @@ const App: React.FC = () => {
         {/* CONTACT SECTION */}
         <section id="contact" className="min-h-screen flex flex-col items-center px-6 text-center relative overflow-hidden pt-24 md:pt-32 pb-8">
            
-           <div className="flex-1 w-full max-w-4xl z-20 flex flex-col justify-center items-center">
+           <div className="flex-1 w-full max-w-[90rem] z-20 flex flex-col justify-center items-center">
 
-              {/* Interactive Contact Text Container */}
+              {/* Interactive Contact Text Container (Touch & Mouse Support) */}
               <div 
-                className="relative group/contact pointer-events-auto cursor-default flex flex-col items-center justify-center py-8 px-4 sm:px-12 mb-8"
-                onMouseEnter={() => setIsContactTextHovered(true)}
-                onMouseLeave={() => setIsContactTextHovered(false)}
+                className="relative group/contact pointer-events-auto cursor-pointer md:cursor-default flex flex-col items-center justify-center py-8 px-4 sm:px-12 mb-8"
+                onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setIsContactTextHovered(true); }}
+                onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setIsContactTextHovered(false); }}
+                onClick={() => { if (window.matchMedia('(hover: none)').matches) setIsContactTextHovered(!isContactTextHovered); }}
               >
                 {/* Localized Canvas 2D Effect - Fades in on hover and masked around the text */}
                 <div 
@@ -423,7 +425,7 @@ const App: React.FC = () => {
                   <span className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl mb-1 md:mb-2 transition-colors duration-500 group-hover/contact:text-transparent group-hover/contact:bg-clip-text group-hover/contact:bg-gradient-to-b group-hover/contact:from-white group-hover/contact:to-slate-300">
                     Let's build
                   </span>
-                  <span className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-[#00d1ff] drop-shadow-xl transition-colors duration-500 group-hover/contact:text-transparent group-hover/contact:bg-clip-text group-hover/contact:bg-gradient-to-r group-hover/contact:from-white group-hover/contact:to-[#00d1ff]">
+                  <span className="whitespace-nowrap text-[8.5vw] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-[#00d1ff] drop-shadow-xl transition-colors duration-500 group-hover/contact:text-transparent group-hover/contact:bg-clip-text group-hover/contact:bg-gradient-to-r group-hover/contact:from-white group-hover/contact:to-[#00d1ff]">
                     something together.
                   </span>
                 </h2>
