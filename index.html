@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meimei - Senior Product Manager</title>
+  
+  <!-- Three.js and Vanta.js for Interactive Background -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -61,16 +66,6 @@
       overflow-x: hidden;
       background: #f6f9fc;
       color: #0a2540;
-    }
-    .gradient-mesh {
-      background-color: #f6f9fc;
-      background-image: 
-        radial-gradient(at 100% 0%, hsla(250,100%,70%,0.2) 0px, transparent 50%),
-        radial-gradient(at 0% 0%, hsla(190,100%,70%,0.15) 0px, transparent 50%);
-    }
-    .hero-accent-shape {
-      background: linear-gradient(135deg, #635bff 0%, #00d4ff 100%);
-      opacity: 0.08;
     }
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
